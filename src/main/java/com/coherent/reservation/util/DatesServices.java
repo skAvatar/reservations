@@ -1,14 +1,13 @@
-package com.coherent.reservation.service;
+package com.coherent.reservation.util;
 
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class HandlerDatesServices {
+public abstract class DatesServices {
 
     public List<LocalDate> stringToLocalDate(List<String> dates){
         return dates.stream()

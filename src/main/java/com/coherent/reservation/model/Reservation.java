@@ -18,14 +18,13 @@ public class Reservation {
     List<LocalDate> reservationDates;
 
     public ReservationDTO getDTO() {
-        ReservationDTO thisReservationDTO = new ReservationDTO();
-        thisReservationDTO.setId(this.id);
-        thisReservationDTO.setClientFullName(this.clientFullName);
-        thisReservationDTO.setRoomNumber(this.roomNumber);
-        thisReservationDTO.setReservationDates(this.reservationDates.stream()
-                .map(LocalDate::toString)
-                .collect(Collectors.toList()));
-        return thisReservationDTO;
+        return ReservationDTO.builder()
+                .id(this.id)
+                .clientFullName(this.clientFullName)
+                .roomNumber(this.roomNumber)
+                .reservationDates(this.reservationDates.stream()
+                        .map(LocalDate::toString)
+                        .collect(Collectors.toList())).build();
     }
 
 }
