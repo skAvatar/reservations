@@ -29,6 +29,20 @@ public class ReservationController {
         return reservationServices.getAll();
     }
 
+    @PutMapping ("/reservation/{id}")
+    public MessageResponseDTO put(@PathVariable Integer id, @RequestBody ReservationDTO updateReservation){
+        return reservationServices.put(id, updateReservation);
+    }
+
+    @DeleteMapping ("/reservation/{id}")
+    public MessageResponseDTO delete(@PathVariable Integer id){
+        return reservationServices.delete(id);
+    }
+
+    @GetMapping ("/reservation/roomNumber/{roomNumber}")
+    public MessageResponseDTO getByRoomNumber(@PathVariable Integer roomNumber){
+        return reservationServices.getByRoomNumber(roomNumber);
+    }
 
 
 
