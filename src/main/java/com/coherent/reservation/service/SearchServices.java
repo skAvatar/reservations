@@ -15,15 +15,17 @@ import java.util.stream.Collectors;
 @Service
 public class SearchServices extends DatesServices {
 
+    Comparator<Reservation> comparatorById = Comparator.comparing(Reservation::getId);
+
     public Optional<Reservation> findByRowNumberAndDates(Set<Reservation> reservations, ReservationDTO reservation) {
 
         Reservation rsvToSearch = Reservation.builder()
                 .roomNumber(reservation.getRoomNumber())
                 .reservationDates(stringToLocalDate(reservation.getReservationDates()))
                 .build();
-
-        if (isRoomTaken(reservations, reservation.getRoomNumber())) {
-            if (isDatesForTheRoomTaken(reservations, stringToLocalDate(reservation.getReservationDates()))) {
+        Optional<Set<Reservation>> reservationsOnRoom = rsvOnRoom(reservations, reservation.getRoomNumber());
+        if (reservationsOnRoom.isPresent() && reservationsOnRoom.get().size() > 0) {
+            if (isDatesForTheRoomTaken(reservationsOnRoom.get(), stringToLocalDate(reservation.getReservationDates()))) {
                 return Optional.of(rsvToSearch);
             }
         }
@@ -31,23 +33,19 @@ public class SearchServices extends DatesServices {
     }
 
 
-
-    private boolean isRoomTaken(Set<Reservation> reservations, Integer roomNumber) {
-        Optional<Reservation> rsvByRoomNumber = reservations.stream()
+    private Optional<Set<Reservation>> rsvOnRoom(Set<Reservation> reservations, Integer roomNumber) {
+        return Optional.of(reservations.stream()
                 .filter(rsv -> rsv.getRoomNumber().equals(roomNumber))
-                .findFirst();
-
-        return rsvByRoomNumber.isPresent();
+                .collect(Collectors.toSet()));
     }
 
-    public boolean isSameRoom(ReservationDTO newRsvDTO, Integer roomNumber){
+    public boolean isSameRoom(ReservationDTO newRsvDTO, Integer roomNumber) {
         return newRsvDTO.getRoomNumber().equals(roomNumber);
     }
 
-    public boolean isSameClientName( ReservationDTO newRsvDTO, String clientName){
+    public boolean isSameClientName(ReservationDTO newRsvDTO, String clientName) {
         return newRsvDTO.getClientFullName().equals(clientName);
     }
-
 
 
     private boolean findByDates(Set<Reservation> reservations, List<LocalDate> inDates) {
@@ -67,7 +65,7 @@ public class SearchServices extends DatesServices {
     }
 
     public Optional<List<ReservationDTO>> findAll(Set<Reservation> reservations) {
-        Comparator<Reservation> comparatorById = Comparator.comparing(Reservation::getId);
+
         if (!reservations.isEmpty()) {
             return Optional.of(reservations.stream()
                     .sorted(comparatorById)
@@ -79,6 +77,7 @@ public class SearchServices extends DatesServices {
     public Optional<List<ReservationDTO>> findAllDatesByRoomNumber(Set<Reservation> reservations, Integer roomNumber) {
         return Optional.of(reservations.stream()
                 .filter(rsv -> rsv.getRoomNumber().equals(roomNumber))
+                .sorted(comparatorById)
                 .map(Reservation::getDTO)
                 .toList());
     }

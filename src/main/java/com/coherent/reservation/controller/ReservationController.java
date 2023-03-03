@@ -6,7 +6,6 @@ import dto.ReservationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 public class ReservationController {
@@ -15,7 +14,7 @@ public class ReservationController {
     ReservationServices reservationServices;
 
     @PostMapping("/reservation/")
-    public MessageResponseDTO add(@RequestBody ReservationDTO newReservation){
+    public MessageResponseDTO add(@RequestBody ReservationDTO newReservation) {
         return reservationServices.add(newReservation);
     }
 
@@ -43,7 +42,5 @@ public class ReservationController {
     public MessageResponseDTO getByRoomNumber(@PathVariable Integer roomNumber){
         return reservationServices.getByRoomNumber(roomNumber);
     }
-
-
 
 }

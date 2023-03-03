@@ -32,24 +32,28 @@ public abstract class DatesServices {
 
         for (Reservation actualRsv: reservations) {
 
+            // rsv_date_start == start_date / start_date == rsv_date_end
             if (newDates.get(0).isEqual(actualRsv.getReservationDates().get(0)) ||
                     newDates.get(0).isEqual(actualRsv.getReservationDates().get(1))) {
                 flag = true;
                 break;
             }
 
+            // rsv_date_start == end_date / end_date == rsv_date_end
             if (newDates.get(1).isEqual(actualRsv.getReservationDates().get(0)) ||
                     newDates.get(1).isEqual(actualRsv.getReservationDates().get(1))) {
                 flag = true;
                 break;
             }
 
+            // rsv_date_start > start_date < rsv_date_end
             if (newDates.get(0).isAfter(actualRsv.getReservationDates().get(0)) &&
                     newDates.get(0).isBefore(actualRsv.getReservationDates().get(1))) {
                 flag = true;
                 break;
             }
 
+            // rsv_date_start > end_date < rsv_date_end
             if (newDates.get(1).isAfter(actualRsv.getReservationDates().get(0)) &&
                     newDates.get(1).isBefore(actualRsv.getReservationDates().get(1))) {
                 flag = true;
