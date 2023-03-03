@@ -40,6 +40,36 @@ public class FileServices {
         }
     }
 
+    public void updateRsvDB(String oldRsv, ReservationDTO newRsv) {
+        File fileToBeModified = new File(FileProperties.ADD_TO_FILE_DB.getPathWithName());
+        String oldContent = "";
+        BufferedReader reader = null;
+        FileWriter writer = null;
+        ReservationDTO oldRsvDTO = gson.fromJson( oldRsv, ReservationDTO.class);
+        try        {
+            reader = new BufferedReader(new FileReader(fileToBeModified));
+
+            String line = reader.readLine();
+            while (line != null)            {
+                oldContent = oldContent + line + System.lineSeparator();
+                line = reader.readLine();
+            }
+
+            //Replacing oldString with newString in the oldContent
+            String newContent = oldContent.replace(gson.toJson(oldRsvDTO), gson.toJson(newRsv));
+
+            //Rewriting the input text file with newContent
+            writer = new FileWriter(fileToBeModified);
+            writer.write(newContent);
+
+            reader.close();
+
+            writer.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     @PostConstruct
     public void loadFileReservationDB() {
         Set<Reservation> reservationsFromFile = new HashSet<>();
@@ -64,7 +94,6 @@ public class FileServices {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
 }

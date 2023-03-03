@@ -1,0 +1,10 @@
+{"id":1,"clientFullName":"Client Full Name","roomNumber":1,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":2,"clientFullName":"Client Full Name","roomNumber":2,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":3,"clientFullName":"Client Full Name","roomNumber":3,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":4,"clientFullName":"Enrique Marin","roomNumber":1,"reservationDates":["2023-04-04","2023-04-04"]}
+{"id":5,"clientFullName":"Client Full Name","roomNumber":5,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":6,"clientFullName":"Client Full Name","roomNumber":6,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":7,"clientFullName":"Client Full Name","roomNumber":7,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":8,"clientFullName":"Client Full Name","roomNumber":10,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":9,"clientFullName":"Client Full Name","roomNumber":11,"reservationDates":["2023-01-13","2023-01-14"]}
+{"id":10,"clientFullName":"Client Full Name","roomNumber":12,"reservationDates":["2023-01-13","2023-01-14"]}
