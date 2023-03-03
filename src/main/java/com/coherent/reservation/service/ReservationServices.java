@@ -20,11 +20,15 @@ public class ReservationServices {
     SearchServices searchServices;
 
     @Autowired
+    FileServices fileServices;
+
+    @Autowired
     ReservationRepository reservationRepo;
 
     private BigInteger reservationId = BigInteger.ONE;
 
-    public MessageResponseDTO add(ReservationDTO newReservation) {
+    public MessageResponseDTO add(ReservationDTO newReservation)  {
+
         if (searchServices.isDatesValid(searchServices.stringToLocalDate(newReservation.getReservationDates()))) {
             if (searchServices.findByRowNumberAndDates(reservationRepo.getReservations(), newReservation).isPresent()) {
                 return MessageResponseDTO.builder()
@@ -33,13 +37,17 @@ public class ReservationServices {
                         .build();
             }
 
+            Reservation rsvToBD = Reservation.builder()
+                    .id(reservationId.intValue())
+                    .clientFullName(newReservation.getClientFullName())
+                    .roomNumber(newReservation.getRoomNumber())
+                    .reservationDates(searchServices.stringToLocalDate(newReservation.getReservationDates()))
+                    .build();
+
             reservationRepo.getReservations()
-                    .add(Reservation.builder()
-                            .id(reservationId.intValue())
-                            .clientFullName(newReservation.getClientFullName())
-                            .roomNumber(newReservation.getRoomNumber())
-                            .reservationDates(searchServices.stringToLocalDate(newReservation.getReservationDates()))
-                            .build());
+                    .add(rsvToBD);
+
+            fileServices.writeOnRsvDB(rsvToBD.getDTO());
 
             reservationId = reservationId.add(BigInteger.ONE);
 
@@ -143,6 +151,14 @@ public class ReservationServices {
 
     public MessageResponseDTO getByRoomNumber(Integer roomNumber) {
 
+        Optional<List<ReservationDTO>> rsvAny = searchServices.findAll(reservationRepo.getReservations());
+        if (rsvAny.isPresent()) {
+            return MessageResponseDTO.builder()
+                    .codeHttp(HttpStatus.SC_OK)
+                    .reservations(rsvAny.get())
+                    .build();
+        }
+
         Optional<List<ReservationDTO>> allRsvByRoom = searchServices.findAllDatesByRoomNumber(reservationRepo.getReservations(), roomNumber);
         if (allRsvByRoom.isPresent() && allRsvByRoom.get().size() > 0) {
             return MessageResponseDTO.builder()
@@ -157,4 +173,6 @@ public class ReservationServices {
                 .build();
 
     }
+
+
 }

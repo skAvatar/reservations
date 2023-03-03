@@ -12,21 +12,18 @@ import java.util.Set;
 @Repository
 public class ReservationRepository {
 
-    @Autowired
-    DatesServices datesServices;
-
-    Set<Reservation> collection;
+    Set<Reservation> reservations;
 
     public Set<Reservation> getReservations() {
-        if (Optional.ofNullable(collection).isEmpty()) {
-            return collection = new HashSet<>();
+        if (Optional.ofNullable(reservations).isEmpty()) {
+            return reservations = new HashSet<>();
         }
 
-        return this.collection;
+        return this.reservations;
     }
 
-    public void setReservations(Set<Reservation> collection) {
-        this.collection = collection;
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
     }
 
 
