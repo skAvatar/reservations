@@ -3,6 +3,8 @@ package com.coherent.reservation.service;
 import com.coherent.reservation.model.MessagesResponse;
 import com.coherent.reservation.model.Reservation;
 import com.coherent.reservation.repository.ReservationRepository;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dto.MessageResponseDTO;
 import dto.ReservationDTO;
 import org.apache.commons.httpclient.HttpStatus;
@@ -27,7 +29,17 @@ public class ReservationServices {
 
     private BigInteger reservationId = BigInteger.ONE;
 
-    public MessageResponseDTO add(ReservationDTO newReservation)  {
+    private final Gson gson = new GsonBuilder().create();
+
+    public MessageResponseDTO add(ReservationDTO newReservation) {
+
+        if (!reservationRepo.getReservations().isEmpty() &&
+                reservationRepo.getReservations().size() > 0) {
+            ReservationDTO lastRSV = searchServices.findAll(reservationRepo.getReservations())
+                    .get().get(reservationRepo.getReservations().size() - 1);
+            System.out.println("lastRSV > " + lastRSV);
+            reservationId = BigInteger.valueOf(lastRSV.getId() + 1);
+        }
 
         if (searchServices.isDatesValid(searchServices.stringToLocalDate(newReservation.getReservationDates()))) {
             if (searchServices.findByRowNumberAndDates(reservationRepo.getReservations(), newReservation).isPresent()) {
@@ -97,8 +109,8 @@ public class ReservationServices {
 
         if (searchServices.isDatesValid(searchServices.stringToLocalDate(updateReservation.getReservationDates()))) {
             Optional<Reservation> rsvById = searchServices.findById(reservationRepo.getReservations(), id);
-            if (rsvById.isPresent()) {
 
+            if (rsvById.isPresent()) {
                 if (searchServices.isDatesForTheRoomTaken(reservationRepo.getReservations(),
                         searchServices.stringToLocalDate(updateReservation.getReservationDates()))) {
 
@@ -107,19 +119,23 @@ public class ReservationServices {
                             .message(MessagesResponse.ROOM_TAKEN.message)
                             .build();
                 }
+                String oldRsv = gson.toJson(rsvById.get().getDTO());
                 reservationRepo.getReservations().remove(rsvById.get());
+
                 rsvById.get().setId(id);
                 rsvById.get().setClientFullName(updateReservation.getClientFullName());
                 rsvById.get().setRoomNumber(updateReservation.getRoomNumber());
                 rsvById.get().setReservationDates(searchServices.stringToLocalDate(updateReservation.getReservationDates()));
+
                 reservationRepo.getReservations().add(rsvById.get());
+
+                fileServices.updateRsvDB(oldRsv, rsvById.get().getDTO());
 
                 return MessageResponseDTO.builder()
                         .codeHttp(HttpStatus.SC_OK)
                         .reservation(rsvById.get().getDTO())
                         .build();
             }
-
             return MessageResponseDTO.builder()
                     .codeHttp(HttpStatus.SC_NO_CONTENT)
                     .message(MessagesResponse.RSV_NOT_FOUND.message)
